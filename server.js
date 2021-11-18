@@ -33,18 +33,18 @@ function promptCMD() {
         ],
       },
     ])
-    .then(async(answers) => {
+    .then((answers) => {
       answers[0]
       if ((answers.choices = [0])) {
-        await connection.query(`SELECT * FROM Department`, (err, res) => {
+        connection.query(`SELECT * FROM Department`, (err, res) => {
           console.table(res);
         });
       } else if ((answers.choices = [1])) {
-        await connection.query(`SELECT * FROM roles`, (err, res) => {
+        connection.query(`SELECT * FROM roles`, (err, res) => {
           console.table(res);
         });
       } else if ((answers.choices = [2])) {
-        await connection.query(`SELECT * FROM employee`, (err, res) => {
+        connection.query(`SELECT * FROM employee`, (err, res) => {
           if (err) {
             console.log(err);
           } else {

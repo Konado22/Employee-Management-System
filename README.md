@@ -21,4 +21,5 @@ inquirer \
 Please download the node modules above and run node server.js to initiate the program
 
 ## Contributors 
-Konado22(myself)
+Konado22(myself) \
+video deployment link : 
