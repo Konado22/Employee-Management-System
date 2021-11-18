@@ -1,0 +1,28 @@
+{
+  "name": "employee-management-system",
+  "version": "1.0.0",
+  "description": "This project was to demonstrate usage of my sql and command line prompts to store data to pass to tables created. \r ## User Story\r AS a user i want to be able to view tables of different departments, roles, and employees. As a user i want to be able to add departments and update employees and be presented updated information\r ## Installation \r This project require the following npm packages: \\\r inquirer \\\r -.env \\\r -express \\\r -mysql2 \\\r -console.table \r ## Table of contents\r -db \\\r --schema.sql \\\r --seeds.sql \\\r -.env \\\r -.gitignore \\\r -server.js \r ## Usage \r Please download the node modules above and run node server.js to initiate the program",
+  "main": "server.js",
+  "dependencies": {
+    "console.table": "^0.10.0",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "inquirer": "^8.2.0",
+    "mysql2": "^2.3.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Konado22/Employee-Management-System.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Konado22/Employee-Management-System/issues"
+  },
+  "homepage": "https://github.com/Konado22/Employee-Management-System#readme"
+}

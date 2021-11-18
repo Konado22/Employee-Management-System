@@ -14,15 +14,15 @@ const connection = mysql.createConnection(
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
   },
-  console.log(`Connected to Database at ${PORT} `)
+  console.log(`Connected to Database at ${PORT}`)
 );
 //callbacks
 function promptCMD() {
-   inquirer
+  inquirer
     .prompt([
       {
         type: "list",
-        name: "answer1",
+        name: "answers",
         message: "Please Select a following option:",
         choices: [
           "View all departments",
@@ -33,36 +33,34 @@ function promptCMD() {
         ],
       },
     ])
-    .then((answers) => {
-      answers[0]
-      if ((answers.choices = [0])) {
-        connection.query(`SELECT * FROM Department`, (err, res) => {
+    .then((resp) => {
+      console.log(resp)
+      if (resp = resp.answers[0]) {
+        connection.query(`SELECT * FROM department;`, function (res) {
           console.table(res);
+          promptCMD();
         });
-      } else if ((answers.choices = [1])) {
-        connection.query(`SELECT * FROM roles`, (err, res) => {
+      } else if (resp =resp.answers[1]) {
+        connection.query(`SELECT * FROM roles;`, (res) => {
           console.table(res);
+          promptCMD();
         });
-      } else if ((answers.choices = [2])) {
-        connection.query(`SELECT * FROM employee`, (err, res) => {
-          if (err) {
-            console.log(err);
-          } else {
-            console.table(res);
-          }
+      } else if (resp = resp.answers[2]) {
+        connection.query(`SELECT * FROM employee;`, (res) => {
+          console.table(res);
+          promptCMD();
         });
-      } else if ((answers.choices = choices[3])) {
-        connection.query(`SELECT roles`);
+      } else if (resp = resp.answers[3]) {
+        addDepartment();
+      } else  if (resp = resp.answers[4]){
+        updateRole();
       }
-    })
+    });
 }
 promptCMD();
 
 function addDepartment() {
-  const newDept = {
-    id: "",
-    name: "",
-  };
+  const newDept = {};
   inquirer
     .prompt([
       {
@@ -80,9 +78,10 @@ function addDepartment() {
       newDept.name = answers.deptName;
       newDept.id = answers.deptId;
       const addDept = connection.query(
-        `INSERT INTO Department(id,name) VALUES (${newDept.id}, ${newDept.name})`,
-        (err, res) => {
+        `INSERT INTO department(id,name) VALUES (${newDept.id}, ${newDept.name})`,
+        (res) => {
           console.table(res);
+          promptCMD();
         }
       );
     });
@@ -93,32 +92,30 @@ function updateRole() {
     last_name: "",
   };
   connection.query(
-    `SELECT * first_name last_name FROM employee `,
+    `SELECT first_name, last_name FROM employee; `,
     (err, res) => {
-      if(err){
+      if (err) {
         console.log(err);
-      } 
-      else {
+      } else {
         console.table(res);
-         newRoleStarter.push([res.first_name + " " + res.last_name]);
+        newRoleStarter.push([res.first_name + " " + res.last_name]);
         inquirer
-        .prompt([{
-          type: 'list',
-          message: 'please select an employee to edit',
-          choices: newRoleStarter,
-        }
-      ,
-    {
-      type:'input',
-      message:'what is their new role?',
-      choices:["CEO", "COO", "Accountant", "Manager"]
-    }]).then((answer) =>{
-      connection.query(`UPDATE ems_db.roles WHERE`)
-
-        })
+          .prompt([
+            {
+              type: "list",
+              message: "please select an employee to edit",
+              choices: newRoleStarter,
+            },
+            {
+              type: "input",
+              message: "what is their new role?",
+              choices: ["CEO", "COO", "Accountant", "Manager"],
+            },
+          ])
+          .then((answer) => {
+            connection.query(`UPDATE ems_db.employee WHERE roles.id = ? `);
+          });
       }
     }
   );
 }
-
-
