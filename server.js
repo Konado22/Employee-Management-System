@@ -6,22 +6,18 @@ const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 3001;
 //mysql connection
+require("dotenv").config();
 const connection = mysql.createConnection(
   {
-    host: "localhost",
-    user: "root",
-    password: "root",
-    database: "ems_db",
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
   },
-  console.log(`Connected to Database at http://localhost:${PORT} `)
+  console.log(`Connected to Database at ${PORT} `)
 );
-//routes
-app.get("/", promptCMD);
-app.get("/department", promptCMD);
-app.get("/roles", promptCMD);
-app.get("/");
-//route callbacks
-function promptCMD(req, res) {
+//callbacks
+function promptCMD() {
   inquirer
     .prompt([
       {
@@ -37,19 +33,26 @@ function promptCMD(req, res) {
         ],
       },
     ])
-    .then(async (answers) => {
-      if ((answers.choices = choices[0])) {
-        const allDep = await connection.query(`SELECT * FROM Department`);
-        console.log(allDep);
-        return promptCMD();
+    .then((answers) => {
+      if ((answers.choices = "View all departments")) {
+        connection.query(`SELECT * FROM Department`, (err, res) => {
+          console.table(res);
+        });
+        promptCMD();
       } else if ((answers.choices = choices[1])) {
-        const allDep = await connection.query(`SELECT * FROM roles`);
-        console.log(allDep);
-        return promptCMD();
+        connection.query(`SELECT * FROM roles`, (err, res) => {
+          console.table(res);
+        });
+        promptCMD();
       } else if ((answers.choices = choices[2])) {
-        const allDep = await connection.query(`SELECT * FROM employee`);
-        console.log(allDep);
-        return promptCMD();
+        connection.query(`SELECT * FROM employee`, (err, res) => {
+          if (err) {
+            console.log(err);
+          } else {
+            console.table(res);
+          }
+        });
+        promptCMD();
       } else if ((answers.choices = choices[3])) {
         connection.query(`SELECT roles`);
       }
@@ -73,18 +76,35 @@ function addDepartment() {
         name: "deptId",
       },
     ])
-    .then ( async (answers) => {
+    .then((answers) => {
       newDept.name = answers.deptName;
-      newDept.id = answer.deptId;
-      const addDept = await connection.query(`INSERT INTO Department(id,name) VALUES (${newDept.id}, ${newDept.name})`)
+      newDept.id = answers.deptId;
+      const addDept = connection.query(
+        `INSERT INTO Department(id,name) VALUES (${newDept.id}, ${newDept.name})`,
+        (err, res) => {
+          console.table(res);
+        }
+      );
     });
+  promptCMD();
 }
 function updateRole() {
-  const newRole = {
-    id: "",
+  const newRoleStarter = {
     first_name: "",
     last_name: "",
-    manager_id: "",
-    
   };
+  connection.query(
+    `SELECT * first_name last_name FROM employee `,
+    (err, res) => {
+      if(err){
+        console.log(err);
+      } 
+      else {
+        console.table(res);
+        forEachnewRoleStarter.push([res.first_name + " " + res.last_name]);
+      }
+    }
+  );
 }
+
+
