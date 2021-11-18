@@ -5,7 +5,7 @@ const rowGen = require("console.table");
 const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 3001;
-//mysql connection
+// mysql connection
 require("dotenv").config();
 const connection = mysql.createConnection(
   {
@@ -18,7 +18,7 @@ const connection = mysql.createConnection(
 );
 //callbacks
 function promptCMD() {
-  inquirer
+   inquirer
     .prompt([
       {
         type: "list",
@@ -33,31 +33,31 @@ function promptCMD() {
         ],
       },
     ])
-    .then((answers) => {
-      if ((answers.choices = "View all departments")) {
-        connection.query(`SELECT * FROM Department`, (err, res) => {
+    .then(async(answers) => {
+      answers[0]
+      if ((answers.choices = [0])) {
+        await connection.query(`SELECT * FROM Department`, (err, res) => {
           console.table(res);
         });
-        promptCMD();
-      } else if ((answers.choices = choices[1])) {
-        connection.query(`SELECT * FROM roles`, (err, res) => {
+      } else if ((answers.choices = [1])) {
+        await connection.query(`SELECT * FROM roles`, (err, res) => {
           console.table(res);
         });
-        promptCMD();
-      } else if ((answers.choices = choices[2])) {
-        connection.query(`SELECT * FROM employee`, (err, res) => {
+      } else if ((answers.choices = [2])) {
+        await connection.query(`SELECT * FROM employee`, (err, res) => {
           if (err) {
             console.log(err);
           } else {
             console.table(res);
           }
         });
-        promptCMD();
       } else if ((answers.choices = choices[3])) {
         connection.query(`SELECT roles`);
       }
-    });
+    })
 }
+promptCMD();
+
 function addDepartment() {
   const newDept = {
     id: "",
@@ -86,7 +86,6 @@ function addDepartment() {
         }
       );
     });
-  promptCMD();
 }
 function updateRole() {
   const newRoleStarter = {
@@ -101,7 +100,22 @@ function updateRole() {
       } 
       else {
         console.table(res);
-        forEachnewRoleStarter.push([res.first_name + " " + res.last_name]);
+         newRoleStarter.push([res.first_name + " " + res.last_name]);
+        inquirer
+        .prompt([{
+          type: 'list',
+          message: 'please select an employee to edit',
+          choices: newRoleStarter,
+        }
+      ,
+    {
+      type:'input',
+      message:'what is their new role?',
+      choices:["CEO", "COO", "Accountant", "Manager"]
+    }]).then((answer) =>{
+      connection.query(`UPDATE ems_db.roles WHERE`)
+
+        })
       }
     }
   );
