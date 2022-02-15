@@ -4,15 +4,14 @@ const inquirer = require("inquirer");
 const rowGen = require("console.table");
 const express = require("express");
 const app = express();
+require('dotenv').config()
 const PORT = process.env.PORT || 3001;
 // mysql connection
-require("dotenv").config();
 const connection = mysql.createConnection(
   {
-    host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
+    database: process.env.DB_NAME
   },
   console.log(`Connected to Database at ${PORT}`)
 );
@@ -36,17 +35,17 @@ function promptCMD() {
     .then((resp) => {
       console.log(resp)
       if (resp = resp.answers[0]) {
-        connection.query(`SELECT * FROM department;`, function (res) {
-          console.table(res);
+        connection.execute(`SELECT * FROM department;`, function (res) {
+         console.table(res);
           promptCMD();
         });
       } else if (resp =resp.answers[1]) {
-        connection.query(`SELECT * FROM roles;`, (res) => {
+        connection.execute(`SELECT * FROM roles;`, (res) => {
           console.table(res);
           promptCMD();
         });
       } else if (resp = resp.answers[2]) {
-        connection.query(`SELECT * FROM employee;`, (res) => {
+        connection.execute(`SELECT * FROM employee;`, (res) => {
           console.table(res);
           promptCMD();
         });
@@ -77,8 +76,8 @@ function addDepartment() {
     .then((answers) => {
       newDept.name = answers.deptName;
       newDept.id = answers.deptId;
-      const addDept = connection.query(
-        `INSERT INTO department(id,name) VALUES (${newDept.id}, ${newDept.name})`,
+      const addDept = connection.execute(
+        `INSERT INTO department(name) VALUES (${newDept.name})`,
         (res) => {
           console.table(res);
           promptCMD();
@@ -91,7 +90,7 @@ function updateRole() {
     first_name: "",
     last_name: "",
   };
-  connection.query(
+  connection.execute(
     `SELECT first_name, last_name FROM employee; `,
     (err, res) => {
       if (err) {
@@ -113,9 +112,13 @@ function updateRole() {
             },
           ])
           .then((answer) => {
-            connection.query(`UPDATE ems_db.employee WHERE roles.id = ? `);
+            connection.execute(`UPDATE ems_db.employee WHERE roles.id = ? `);
           });
+          
       }
     }
   );
 }
+app.listen(PORT, () => {
+  console.log(`App listening on port ${PORT}!`);
+});
