@@ -46,12 +46,11 @@ function addDepartment() {
 function updateRole() {
   const newRoleStarter = {};
   db.query(
-    `SELECT first_name, last_name FROM employee; `,
+    `SELECT * first_name, last_name FROM employee; `,
     (err, res) => {
       if (err) {
         console.log(err);
       } else {
-        console.table(res);
         newRoleStarter.push({name: res.first_name + ' ' + res.last_name});
         inquirer
           .prompt([
@@ -67,8 +66,8 @@ function updateRole() {
             },
           ])
           .then((answer) => {
-            db.query(`UPDATE ems_db.employee WHERE roles.id = ? ;`, (res,err) => {
-              console.table(res)
+            db.query(`UPDATE ems_db.employee WHERE roles.id = ${choices} ;`, (answer,err) => {
+              console.table(answer)
               if (err) {
                 console.log(err)
               }
@@ -131,11 +130,11 @@ function promptCMD() {
       if (resp ='View all departments') {
         viewDepartments();
         
-      } else if (resp ='View all roles') {
+      } else if (resp = 'View all roles') {
         viewRoles ()
-      } else if (resp ='View all employees') {
+      } else if (resp = 'View all employees') {
         viewEmployees ()
-      } else if (resp ='Add a department') {
+      } else if (resp = 'Add a department') {
         addDepartment()
       } else  if (resp = 'Update employee role'){
         updateRole()
