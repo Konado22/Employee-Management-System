@@ -11,10 +11,16 @@ const connection = mysql.createConnection(
   {
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME
+    database: process.env.DB_NAME,
+    host: process.env.DB_HOST
   },
   console.log(`Connected to Database at ${PORT}`)
 );
+connection.connect( (err) => {
+if (err) {
+  console.log(err)
+}
+})
 //callbacks
 function promptCMD() {
   inquirer
@@ -119,6 +125,6 @@ function updateRole() {
     }
   );
 }
-app.listen(PORT, () => {
-  console.log(`App listening on port ${PORT}!`);
-});
+// app.listen(PORT, () => {
+//   console.log(`App listening on port ${PORT}!`);
+// });

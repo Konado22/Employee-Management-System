@@ -1,3 +1,3 @@
-use ems_db;
-SOURCE db/schema.sql;
-SOURCE db/seeds.sql;
+use employee_db;
+SOURCE schema.sql;
+SOURCE seeds.sql;
