@@ -32,9 +32,12 @@ function addDepartment() {
     .then((answers) => {
       newDept.name = answers.deptName;
       db.query(
-        `INSERT INTO department(name) VALUES (${newDept.name})`,
-        (res) => {
+        `INSERT INTO department(name) VALUES (${newDept.name});`,
+        (res,err) => {
           console.table(res);
+          if (err) {
+            console.log(err)
+          }
           return promptCMD();
         }
       );
@@ -64,7 +67,12 @@ function updateRole() {
             },
           ])
           .then((answer) => {
-            db.query(`UPDATE ems_db.employee WHERE roles.id = ? `);
+            db.query(`UPDATE ems_db.employee WHERE roles.id = ? ;`, (res,err) => {
+              console.table(res)
+              if (err) {
+                console.log(err)
+              }
+            });
             return promptCMD();
           });
           
@@ -74,20 +82,29 @@ function updateRole() {
  
 }
 function viewDepartments () {
-  db.query(`SELECT * FROM department;`,  (res) => {
+  db.query(`SELECT * FROM employee_db.department;`,  (res, err) => {
     console.table(res);
+    if (err) {
+      console.log(err)
+    }
      return promptCMD();
    });
 }
 function viewRoles () {
-  db.query(`SELECT * FROM roles;`, (res) => {
+  db.query(`SELECT * FROM employee_db.role;`, (res,err) => {
     console.table(res);
+    if (err) {
+      console.log(err)
+    }
     return promptCMD();
   });
 }
 function viewEmployees () {
-  db.query(`SELECT * FROM employee;`, (res) => {
+  db.query(`SELECT * FROM employee_db.employee;`, (res,err) => {
     console.table(res);
+    if (err) {
+      console.log(err)
+    }
     return promptCMD();
   });
 }
@@ -111,16 +128,16 @@ function promptCMD() {
     ])
     .then((resp) => {
       console.log(resp)
-      if (resp ="View all departments") {
+      if (resp ='View all departments') {
         viewDepartments();
         
-      } else if (resp ="View all roles") {
+      } else if (resp ='View all roles') {
         viewRoles ()
-      } else if (resp ="View all employees") {
+      } else if (resp ='View all employees') {
         viewEmployees ()
-      } else if (resp ="Add a department") {
+      } else if (resp ='Add a department') {
         addDepartment()
-      } else  if (resp = "Update employee role"){
+      } else  if (resp = 'Update employee role'){
         updateRole()
       }
     });
