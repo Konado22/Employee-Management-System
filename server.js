@@ -1,7 +1,7 @@
 //packages
 const mysql = require("mysql2");
 const inquirer = require("inquirer");
-const table = require("console.table");
+// const table = require("console.table");
 require('dotenv').config()
 const PORT = process.env.PORT || 3001;
 // mysql connection
@@ -20,7 +20,7 @@ if (err) {
 }
 })
 function addDepartment() {
-  const newDept = [];
+  const newDept = {};
   inquirer
     .prompt([
       {
@@ -41,7 +41,7 @@ function addDepartment() {
     });
 }
 function updateRole() {
-  const newRoleStarter = [];
+  const newRoleStarter = {};
   db.query(
     `SELECT first_name, last_name FROM employee; `,
     (err, res) => {
@@ -65,12 +65,13 @@ function updateRole() {
           ])
           .then((answer) => {
             db.query(`UPDATE ems_db.employee WHERE roles.id = ? `);
+            return promptCMD();
           });
           
       }
     }
   );
-  return promptCMD();
+ 
 }
 function viewDepartments () {
   db.query(`SELECT * FROM department;`,  (res) => {
@@ -110,16 +111,16 @@ function promptCMD() {
     ])
     .then((resp) => {
       console.log(resp)
-      if (resp === "View all departments") {
+      if (resp ="View all departments") {
         viewDepartments();
         
-      } else if (resp ==="View all roles") {
+      } else if (resp ="View all roles") {
         viewRoles ()
-      } else if (resp ==="View all employees") {
+      } else if (resp ="View all employees") {
         viewEmployees ()
-      } else if (resp ==="Add a department") {
+      } else if (resp ="Add a department") {
         addDepartment()
-      } else  if (resp === "Update employee role"){
+      } else  if (resp = "Update employee role"){
         updateRole()
       }
     });
