@@ -200,7 +200,7 @@ function updateRole() {
 }
 function viewDepartments () {
   db.query(`SELECT * FROM employee_db.department;`,  (answer, err) => {
-    console.table(answer);
+    console.log(answer);
     if (err) {
       console.log(err)
     }
