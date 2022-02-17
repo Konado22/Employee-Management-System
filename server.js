@@ -12,7 +12,6 @@ const db = mysql.createConnection(
     database: process.env.DB_NAME,
     host: process.env.DB_HOST
   },
-  console.log(`Connected to Database at ${PORT}`)
 );
 db.connect( (err) => {
 if (err) {
@@ -30,15 +29,15 @@ function addDepartment() {
       },
     ])
     .then((answers) => {
-      newDept.name = answers.deptName;
+      newDept = answers.deptName;
       db.query(
         `INSERT INTO department(name) VALUES (${newDept.name});`,
-        (res,err) => {
-          console.table(res);
+        (response,err) => {
+          console.table(response);
           if (err) {
             console.log(err)
           }
-          return promptCMD();
+           promptCMD();
         }
       );
     });
@@ -46,33 +45,35 @@ function addDepartment() {
 function updateRole() {
   const newRoleStarter = {};
   db.query(
-    `SELECT * first_name, last_name FROM employee; `,
-    (err, res) => {
+    `SELECT * first_name, last_name FROM employeedb.employee; `,
+    (err, answers) => {
       if (err) {
         console.log(err);
       } else {
-        newRoleStarter.push({name: res.first_name + ' ' + res.last_name});
+        newRoleStarter.push({name: answers.first_name + ' ' + answers.last_name});
         inquirer
           .prompt([
             {
               type: "list",
               message: "please select an employee to edit",
               choices: newRoleStarter,
+              
             },
-            {
-              type: "input",
-              message: "what is their new role?",
-              choices: ["CEO", "COO", "Accountant", "Manager"],
-            },
+            // {
+            //   type: "input",
+            //   message: "what is their new role?",
+            //   choices: ["CEO", "COO", "Accountant", "Manager"],
+            // },
           ])
-          .then((answer) => {
-            db.query(`UPDATE ems_db.employee WHERE roles.id = ${choices} ;`, (answer,err) => {
-              console.table(answer)
+          .then(() => {
+            const empName = answer.name
+            db.query(`UPDATE ems_db.employee WHERE roles.id = ${data} ;`, (answer,err) => {
+              console.table(answer.value)
               if (err) {
                 console.log(err)
               }
             });
-            return promptCMD();
+             promptCMD();
           });
           
       }
@@ -81,30 +82,30 @@ function updateRole() {
  
 }
 function viewDepartments () {
-  db.query(`SELECT * FROM employee_db.department;`,  (res, err) => {
-    console.table(res);
+  db.query(`SELECT * FROM employee_db.department;`,  (answer, err) => {
+    console.table(answer);
     if (err) {
       console.log(err)
     }
-     return promptCMD();
+      promptCMD();
    });
 }
 function viewRoles () {
-  db.query(`SELECT * FROM employee_db.role;`, (res,err) => {
-    console.table(res);
+  db.query(`SELECT * FROM employee_db.role;`, (answers,err) => {
+    console.table(answers);
     if (err) {
       console.log(err)
     }
-    return promptCMD();
+     promptCMD();
   });
 }
 function viewEmployees () {
-  db.query(`SELECT * FROM employee_db.employee;`, (res,err) => {
-    console.table(res);
+  db.query(`SELECT * FROM employee_db.employee;`, (answers,err) => {
+    console.table(answers);
     if (err) {
       console.log(err)
     }
-    return promptCMD();
+     promptCMD();
   });
 }
 
@@ -114,7 +115,7 @@ function promptCMD() {
     .prompt([
       {
         type: "list",
-        name: "answers",
+        name: "primaryChoice",
         message: "Please Select a following option:",
         choices: [
           "View all departments",
@@ -122,22 +123,29 @@ function promptCMD() {
           "View all employees",
           "Add a department",
           "Update employee role",
+          "Exit"
         ],
       },
     ])
-    .then((resp) => {
-      console.log(resp)
-      if (resp ='View all departments') {
+    .then((answer) => {
+      console.log(answer)
+      var selection = answer.primaryChoice
+      console.log(selection)
+      if (selection ==="View all departments" ) {
         viewDepartments();
         
-      } else if (resp = 'View all roles') {
+      } else if (selection === "View all roles" ) {
         viewRoles ()
-      } else if (resp = 'View all employees') {
+      } else if (selection === "View all employees" ) {
         viewEmployees ()
-      } else if (resp = 'Add a department') {
+      } else if (selection === "Add a department" ) {
         addDepartment()
-      } else  if (resp = 'Update employee role'){
+      } else  if (selection === "Update employee role" ){
         updateRole()
+      }
+      else {
+        console.log("BYE")
+        return
       }
     });
 }
