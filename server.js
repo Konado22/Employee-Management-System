@@ -47,7 +47,7 @@ function addRole() {
     .prompt([
       {
         type: "input",
-        message: "What is the name of the new Role",
+        message: "What is the new Role",
         name: "roleName",
       },
       {
@@ -57,15 +57,16 @@ function addRole() {
       },
       {
         type: "input",
-        message: "Which Department do they report to",
-        name: "salary",
+        message: "Which Department do they report to: Marketing:1 Management:2 Finance:3",
+        name: "newDeptId",
       },
     ])
     .then((answers) => {
       var newRole = answers.roleName;
       var newSalary = answers.salary
+      var newDepartment = answers.newDeptId ;
       db.query(
-        `INSERT INTO role(title, salary) VALUES ("${newRole}"), ("${newSalary}");`,
+        `INSERT INTO role(title, salary, Department_id) VALUES ("${newRole}", ${newSalary}, ${newDepartment});`,
         (response,err) => {
           console.table(response);
           if (err) {
@@ -81,12 +82,33 @@ function addEmployee() {
     .prompt([
       {
         type: "input",
-        message: "What is the name of the new Employee",
-        name: "employeeName",
+        message: "What is the first name of the new Employee",
+        name: "employeeFirstName",
       },
+      {
+        type: "input",
+        message: "What is the last name of the new Employee",
+        name: "employeeLastName",
+
+      },
+      {
+        type: "input",
+        message: "What is their role",
+        name: "employeeRole",
+
+      },
+      {
+        type: "input",
+        message: "What is their Department",
+        name: "employeeRole",
+
+      }
+
     ])
     .then((answers) => {
       var newEmployee = answers.employeeName;
+     
+
       db.query(
         `INSERT INTO department(name) VALUES ("${newEmployee}");`,
         (response,err) => {
@@ -130,6 +152,7 @@ function updateRole() {
           ])
           .then((answer) => {
             const empName = answer.editEmployee
+            const newPosition = answer.currentPosition[i]+1;
             db.query(`UPDATE employee_db.employee WHERE roles.title = ${empName} ;`, (answer,err) => {
               console.table(empName)
               if (err) {
