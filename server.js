@@ -19,7 +19,6 @@ if (err) {
 }
 })
 function addDepartment() {
-  const newDept = {};
   inquirer
     .prompt([
       {
@@ -29,9 +28,9 @@ function addDepartment() {
       },
     ])
     .then((answers) => {
-      newDept = answers.deptName;
+      var newDept = answers.deptName;
       db.query(
-        `INSERT INTO department(name) VALUES (${newDept.name});`,
+        `INSERT INTO department(name) VALUES ("${newDept}");`,
         (response,err) => {
           console.table(response);
           if (err) {
@@ -43,32 +42,36 @@ function addDepartment() {
     });
 }
 function updateRole() {
-  const newRoleStarter = {};
+  var newRoleStarter = [];
   db.query(
-    `SELECT * first_name, last_name FROM employeedb.employee; `,
+    `SELECT * FROM employee_db.employee; `,
     (err, answers) => {
       if (err) {
         console.log(err);
       } else {
-        newRoleStarter.push({name: answers.first_name + ' ' + answers.last_name});
+        answers.forEach((res) => {
+          newRoleStarter.push(res.first_name + ' ' + res.last_name);
+        })
         inquirer
           .prompt([
             {
               type: "list",
               message: "please select an employee to edit",
               choices: newRoleStarter,
+              name: "editEmployee"
               
             },
-            // {
-            //   type: "input",
-            //   message: "what is their new role?",
-            //   choices: ["CEO", "COO", "Accountant", "Manager"],
-            // },
+            {
+              type: "input",
+              message: "what is their new role?",
+              choices: ["CEO", "COO", "Accountant", "Manager"],
+              name: "currentPosition"
+            },
           ])
-          .then(() => {
-            const empName = answer.name
-            db.query(`UPDATE ems_db.employee WHERE roles.id = ${data} ;`, (answer,err) => {
-              console.table(answer.value)
+          .then((answer) => {
+            const empName = answer.editEmployee
+            db.query(`UPDATE employee_db.employee WHERE roles.id = ${empName} ;`, (answer,err) => {
+              console.table(empName)
               if (err) {
                 console.log(err)
               }
@@ -128,9 +131,9 @@ function promptCMD() {
       },
     ])
     .then((answer) => {
-      console.log(answer)
+      // console.log(answer)
       var selection = answer.primaryChoice
-      console.log(selection)
+      // console.log(selection)
       if (selection ==="View all departments" ) {
         viewDepartments();
         
@@ -144,7 +147,7 @@ function promptCMD() {
         updateRole()
       }
       else {
-        console.log("BYE")
+        console.log("BYE AND THANKS FOR USING")
         return
       }
     });
