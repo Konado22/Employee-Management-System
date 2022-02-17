@@ -134,6 +134,7 @@ function addEmployee() {
 }
 
 function updateRole() {
+  var array = []
   var newRoleStarter = [];
   //
   db.query(
@@ -143,7 +144,7 @@ function updateRole() {
         console.log(err);
       } else {
         answers.forEach((res) => {
-          newRoleStarter.push(res.first_name + ' ' + res.last_name);
+          newRoleStarter.push(res.first_name + ' ' + res.last_name +": " + res.id);
         })
         inquirer
           .prompt([
@@ -154,23 +155,40 @@ function updateRole() {
               name: "editEmployee"
               
             },
-            {
-              type: "list",
-              message: "what is their new role?",
-              choices: ["CEO", "COO", "Accountant", "Manager"],
-              name: "currentPosition"
-            },
           ])
           .then((answer) => {
             const empName = answer.editEmployee
-            let choices = ["CEO", "COO", "Accountant", "Manager"]
-            const positionId = choices.indexOf(answer.currentPosition)
-            db.query(`UPDATE employee_db.employee WHERE roles.id = ${positionId} ;`, (answer,err) => {
+            
+            // let choices = ["CEO", "COO", "Accountant", "Manager"]
+            // const positionId = choices.indexOf(answer.currentPosition)
+            db.query(`Select * From employee_db.role`, (err,answers) => {
+              if (err) {
+                console.log(err)
+              }
+
+              answers.forEach((result) => {
+                  array.push(result.role)
+              })
+            })
+            inquirer
+            .prompt([
+  
+            {
+              type: "list",
+              message: "what is their new role?",
+              choices: array,
+              name: "currentPosition"
+            },
+          ]).then((res) => {
+            var yahoo= res.currentPosition
+            db.query(`UPDATE employee_db.employee set roles.id = ? where id =? ;`,[empName,yahoo], (answer,err) => {
               console.table(empName)
               if (err) {
                 console.log(err)
               }
             });
+
+          })
              promptCMD();
           });
           
