@@ -134,7 +134,6 @@ function addEmployee() {
 }
 
 function updateRole() {
-  var array = []
   var newRoleStarter = [];
   //
   db.query(
@@ -144,7 +143,7 @@ function updateRole() {
         console.log(err);
       } else {
         answers.forEach((res) => {
-          newRoleStarter.push(res.first_name + ' ' + res.last_name +": " + res.id);
+          newRoleStarter.push(res.first_name + ' ' + res.last_name);
         })
         inquirer
           .prompt([
@@ -155,40 +154,42 @@ function updateRole() {
               name: "editEmployee"
               
             },
+            {
+              type: "input",
+              message: "what is their new role? CEO: 1, COO: 2, Accountant: 3, Manager: 4",
+              name: "currentRole"
+            },
           ])
           .then((answer) => {
-            const empName = answer.editEmployee
-            
+
+            let emp = answer.editEmployee;
+             const first =()=> {
+              emp.splice(1,1)
+              return new emp
+             }
+             const last = () => {
+              emp.splice(1,0)
+              return new emp
+             } 
+            let newRole = answer.currentRole;
+            // var arr = []
+            // const empName = answer.editEmployee
             // let choices = ["CEO", "COO", "Accountant", "Manager"]
             // const positionId = choices.indexOf(answer.currentPosition)
-            db.query(`Select * From employee_db.role`, (err,answers) => {
-              if (err) {
-                console.log(err)
-              }
-
-              answers.forEach((result) => {
-                  array.push(result.role)
-              })
-            })
-            inquirer
-            .prompt([
-  
-            {
-              type: "list",
-              message: "what is their new role?",
-              choices: array,
-              name: "currentPosition"
-            },
-          ]).then((res) => {
-            var yahoo= res.currentPosition
-            db.query(`UPDATE employee_db.employee set roles.id = ? where id =? ;`,[empName,yahoo], (answer,err) => {
-              console.table(empName)
+            // db.query(`select * from employee_db.role`, (res,err) => {
+            //   if (err) {
+            //     console.log(err)
+            //   }
+            //   res.forEach(role => {
+            //     arr.push(role)
+            //   });
+            // })
+            db.query(`UPDATE employee_db.employee WHERE  first_name = ${first}, last_name = ${last}, roles.id = ?, where department_id= ?;`, [newRole, emp] , (answer,err) => {
+              console.table(answer)
               if (err) {
                 console.log(err)
               }
             });
-
-          })
              promptCMD();
           });
           
@@ -240,7 +241,7 @@ function promptCMD() {
           "Add a department",
           "Add role",
           "Add employee",
-          "Update employee role",
+          // "Update employee role",
           "Exit"
         ],
       },
