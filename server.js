@@ -43,6 +43,13 @@ function addDepartment() {
 }
 function addRole() {
   //need to add salary as it is required
+  // var array = []
+  // var deptRef = db.query(`SELECT * FROM employee_db.department;`, (res,err) => {
+  //   if (err) {
+  //     console.log(err)
+  //   }
+  //   array.push(deptRef)
+  // })
   inquirer
     .prompt([
       {
@@ -56,6 +63,7 @@ function addRole() {
         name: "salary",
       },
       {
+        /////////////////////////////////////////////////////////
         type: "input",
         message: "Which Department do they report to: Marketing:1 Management:2 Finance:3",
         name: "newDeptId",
@@ -65,6 +73,7 @@ function addRole() {
       var newRole = answers.roleName;
       var newSalary = answers.salary
       var newDepartment = answers.newDeptId ;
+
       db.query(
         `INSERT INTO role(title, salary, Department_id) VALUES ("${newRole}", ${newSalary}, ${newDepartment});`,
         (response,err) => {
@@ -93,24 +102,26 @@ function addEmployee() {
       },
       {
         type: "input",
-        message: "What is their role",
+        message: "What is their role: CEO:1 COO:2 Accountnt:3 Manager:4",
         name: "employeeRole",
 
       },
       {
         type: "input",
-        message: "What is their Department",
-        name: "employeeRole",
+        message: "Which Department do they report to: Marketing:1 Management:2 Finance:3",
+        name: "employeeDepartment",
 
       }
 
     ])
     .then((answers) => {
-      var newEmployee = answers.employeeName;
-     
+      var newFirst = answers.employeeFirstName;
+      var newLast = answers.employeeLastName;
+      var newRoleId = answers.employeeRole;
+      var newDepartmentId = answers.employeeDepartment;
 
       db.query(
-        `INSERT INTO department(name) VALUES ("${newEmployee}");`,
+        `INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES ("${newFirst}", "${newLast}", ${newRoleId}, ${newDepartmentId});`,
         (response,err) => {
           console.table(response);
           if (err) {
@@ -152,8 +163,9 @@ function updateRole() {
           ])
           .then((answer) => {
             const empName = answer.editEmployee
-            const newPosition = answer.currentPosition[i]+1;
-            db.query(`UPDATE employee_db.employee WHERE roles.title = ${empName} ;`, (answer,err) => {
+            let choices = ["CEO", "COO", "Accountant", "Manager"]
+            const positionId = choices.indexOf(answer.currentPosition)
+            db.query(`UPDATE employee_db.employee WHERE roles.id = ${positionId} ;`, (answer,err) => {
               console.table(empName)
               if (err) {
                 console.log(err)
@@ -247,7 +259,17 @@ function promptCMD() {
     });
 }
 promptCMD();
-
-// app.listen(PORT, () => {
-//   console.log(`App listening on port ${PORT}!`);
-// });
+// save for logic on looping questions from db
+// var array = []
+// var totalDept = db.query(`SELECT * FROM employee_db.department`,(res,err) => {
+//   if (err) {
+//     console.log(err)
+//   }
+//   res.forEach( (res) => {
+//     array.push({
+//       title:res.title,
+//       salary:res.salary,
+//       id:res.id
+//     })
+//   })
+// })
