@@ -41,8 +41,68 @@ function addDepartment() {
       );
     });
 }
+function addRole() {
+  //need to add salary as it is required
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        message: "What is the name of the new Role",
+        name: "roleName",
+      },
+      {
+        type: "input",
+        message: "What is the salary",
+        name: "salary",
+      },
+      {
+        type: "input",
+        message: "Which Department do they report to",
+        name: "salary",
+      },
+    ])
+    .then((answers) => {
+      var newRole = answers.roleName;
+      var newSalary = answers.salary
+      db.query(
+        `INSERT INTO role(title, salary) VALUES ("${newRole}"), ("${newSalary}");`,
+        (response,err) => {
+          console.table(response);
+          if (err) {
+            console.log(err)
+          }
+           promptCMD();
+        }
+      );
+    });
+}
+function addEmployee() {
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        message: "What is the name of the new Employee",
+        name: "employeeName",
+      },
+    ])
+    .then((answers) => {
+      var newEmployee = answers.employeeName;
+      db.query(
+        `INSERT INTO department(name) VALUES ("${newEmployee}");`,
+        (response,err) => {
+          console.table(response);
+          if (err) {
+            console.log(err)
+          }
+           promptCMD();
+        }
+      );
+    });
+}
+
 function updateRole() {
   var newRoleStarter = [];
+  //
   db.query(
     `SELECT * FROM employee_db.employee; `,
     (err, answers) => {
@@ -62,7 +122,7 @@ function updateRole() {
               
             },
             {
-              type: "input",
+              type: "list",
               message: "what is their new role?",
               choices: ["CEO", "COO", "Accountant", "Manager"],
               name: "currentPosition"
@@ -70,7 +130,7 @@ function updateRole() {
           ])
           .then((answer) => {
             const empName = answer.editEmployee
-            db.query(`UPDATE employee_db.employee WHERE roles.id = ${empName} ;`, (answer,err) => {
+            db.query(`UPDATE employee_db.employee WHERE roles.title = ${empName} ;`, (answer,err) => {
               console.table(empName)
               if (err) {
                 console.log(err)
@@ -125,6 +185,8 @@ function promptCMD() {
           "View all roles",
           "View all employees",
           "Add a department",
+          "Add role",
+          "Add employee",
           "Update employee role",
           "Exit"
         ],
@@ -145,6 +207,15 @@ function promptCMD() {
         addDepartment()
       } else  if (selection === "Update employee role" ){
         updateRole()
+        //still needs attention
+      }
+      else if (selection === "Add role" ){
+        addRole();
+        //need to fix query
+      }
+      else if (selection === "Add employee" ){
+        addEmployee();
+        //need to fix query
       }
       else {
         console.log("BYE AND THANKS FOR USING")
