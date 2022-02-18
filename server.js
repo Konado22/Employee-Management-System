@@ -142,8 +142,9 @@ function updateRole() {
       if (err) {
         console.log(err);
       } else {
+      
         answers.forEach((res) => {
-          newRoleStarter.push(res.first_name + ' ' + res.last_name);
+          newRoleStarter.push( {name: res.first_name + ' ' + res.last_name, value: res.id});
         })
         inquirer
           .prompt([
@@ -154,37 +155,34 @@ function updateRole() {
               name: "editEmployee"
               
             },
-            {
-              type: "input",
-              message: "what is their new role? CEO: 1, COO: 2, Accountant: 3, Manager: 4",
-              name: "currentRole"
-            },
           ])
           .then((answer) => {
+            const employee = answer.editEmployee
+            var array = []
 
-            let emp = answer.editEmployee;
-             const first =()=> {
-              emp.splice(1,1)
-              return new emp
-             }
-             const last = () => {
-              emp.splice(1,0)
-              return new emp
-             } 
-            let newRole = answer.currentRole;
-            // var arr = []
-            // const empName = answer.editEmployee
-            // let choices = ["CEO", "COO", "Accountant", "Manager"]
-            // const positionId = choices.indexOf(answer.currentPosition)
-            // db.query(`select * from employee_db.role`, (res,err) => {
-            //   if (err) {
-            //     console.log(err)
-            //   }
-            //   res.forEach(role => {
-            //     arr.push(role)
-            //   });
-            // })
-            db.query(`UPDATE employee_db.employee WHERE  first_name = ${first}, last_name = ${last}, roles.id = ?, where department_id= ?;`, [newRole, emp] , (answer,err) => {
+            db.query(`SELECT * FROM employee_db.role`, (err,res) => {
+              if (err) {
+                console.log(err)
+              }
+              res.forEach((response) => {
+                array.push({title: this.title, salary:this.salary, id: this.id})
+              })
+              inquirer
+              .prompt([
+                [
+                  {
+                    type: "list",
+                    message: "what is their new role?",
+                    choices: array,
+                    name: "currentRole"
+                  },
+                ]
+              ])
+            })
+            .then((answer) => {
+              var roleId = answer.currentRole.id
+            })
+            db.promise().query(`UPDATE employee_db.employee WHERE  first_name = ${first}, last_name = ${last}, roles.id = ${roleId}, where department_id= ?;`, [newRole, emp] , (answer,err) => {
               console.table(answer)
               if (err) {
                 console.log(err)
@@ -241,7 +239,7 @@ function promptCMD() {
           "Add a department",
           "Add role",
           "Add employee",
-          // "Update employee role",
+          "Update employee role",
           "Exit"
         ],
       },
