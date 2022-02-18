@@ -1,6 +1,8 @@
 //packages
 const mysql = require("mysql2");
 const inquirer = require("inquirer");
+const { response } = require("express");
+const { listen } = require("express/lib/application");
 // const table = require("console.table");
 require('dotenv').config()
 const PORT = process.env.PORT || 3001;
@@ -132,70 +134,57 @@ function addEmployee() {
       );
     });
 }
-
 function updateRole() {
-  var newRoleStarter = [];
-  //
-  db.query(
-    `SELECT * FROM employee_db.employee; `,
-    (err, answers) => {
-      if (err) {
-        console.log(err);
-      } else {
-      
-        answers.forEach((res) => {
-          newRoleStarter.push( {name: res.first_name + ' ' + res.last_name, value: res.id});
-        })
-        inquirer
-          .prompt([
-            {
-              type: "list",
-              message: "please select an employee to edit",
-              choices: newRoleStarter,
-              name: "editEmployee"
-              
-            },
-          ])
-          .then((answer) => {
-            const employee = answer.editEmployee
-            var array = []
-
-            db.query(`SELECT * FROM employee_db.role`, (err,res) => {
-              if (err) {
-                console.log(err)
-              }
-              res.forEach((response) => {
-                array.push({title: this.title, salary:this.salary, id: this.id})
-              })
-              inquirer
-              .prompt([
-                [
-                  {
-                    type: "list",
-                    message: "what is their new role?",
-                    choices: array,
-                    name: "currentRole"
-                  },
-                ]
-              ])
-            })
-            .then((answer) => {
-              var roleId = answer.currentRole.id
-            })
-            db.promise().query(`UPDATE employee_db.employee WHERE  first_name = ${first}, last_name = ${last}, roles.id = ${roleId}, where department_id= ?;`, [newRole, emp] , (answer,err) => {
-              console.table(answer)
-              if (err) {
-                console.log(err)
-              }
-            });
-             promptCMD();
-          });
-          
-      }
+  let employeeArr = []
+  let roleArr =[]
+  db.query(`SELECT * FROM employee_db.employee`, (err, answer) => {
+    if (err) {
+      console.log(err)
     }
-  );
- 
+    answer.forEach((response) => {
+    employeeArr.push(response.first_name + " " + response.last_name)
+    })
+  })
+  inquirer
+  .prompt([
+    {
+    type: "list",
+    name: "employeeInfo",
+    message: "Which employee would you like to update?",
+    choices: [employeeArr]
+    }])
+    .then((response) => {
+      let employeeInfo = response.employeeInfo
+      db.query(`SELECT * FROM employee_db.role`, (err,answer) => {
+        if (err) {
+          console.log(err)
+        }
+        answer.forEach((response) => {
+          roleArr.push(`"roleName:${response.role}, salary: ${response.salary}, id: ${response.id}"`)
+        })
+      })
+    
+    inquirer.prompt([
+      {
+        type:"list",
+        choices: [roleArr],
+        name:"roleUpdate",
+        message:"What is their new role?"
+
+      }
+    ]).then((response) => {
+      let newRole = response.roleUpdate.id
+    
+    db.query(`UPDATE employee_db.employee SET role_id = ? where id = ?`, [newRole, employeeInfo], (err,answer) => {
+      if (err) {
+        console.log(err)
+      }
+      console.log("success", answer)
+    })
+    })
+    })
 }
+
 function viewDepartments () {
   db.query(`SELECT * FROM employee_db.department;`,  (answer, err) => {
     console.log(answer);
