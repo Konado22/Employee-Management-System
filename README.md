@@ -22,4 +22,4 @@ Please download the node modules above and run node server.js to initiate the pr
 
 ## Contributors 
 Konado22(myself) \
-video deployment link : 
+video deployment link : <a href="https://watch.screencastify.com/v/2P3wJ7dEwXLREbDvwiZq" target="_blank"> click here</a>
